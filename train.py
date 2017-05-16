@@ -32,7 +32,10 @@ x = data.train.image
 y = tf.ones(batch_size, dtype=tf.sg_floatx)
 
 # discriminator labels ( half 1s, half 0s )
-y_disc = tf.concat(0, [y, y * 0])
+try:
+    y_disc = tf.concat(0, [y, y * 0])
+except:
+    y_disc = tf.concat([y, y * 0], 0)
 
 #
 # create generator
@@ -48,7 +51,10 @@ z = z_cat.sg_one_hot(depth=num_category).sg_concat(target=tf.random_uniform((bat
 z_cont = z[:, num_category:num_category+num_cont]
 
 # category label
-label = tf.concat(0, [data.train.label, z_cat])
+try:
+    label = tf.concat(0, [data.train.label, z_cat])
+except:
+    label = tf.concat([data.train.label, z_cat], 0)
 
 # generator network
 with tf.sg_context(name='generator', size=4, stride=2, act='relu', bn=True):
@@ -66,7 +72,10 @@ tf.sg_summary_image(gen)
 #
 
 # create real + fake image input
-xx = tf.concat(0, [x, gen])
+try:
+    xx = tf.concat(0, [x, gen])
+except:
+    xx = tf.concat([x, gen], 0)
 
 with tf.sg_context(name='discriminator', size=4, stride=2, act='leaky_relu'):
     # shared part
